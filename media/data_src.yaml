@@ -1,0 +1,107 @@
+# -----------------------------------------------------------------------------
+- file_name: Asakusa_Kaminarimon_Gate_1.mp4
+  extrinsic: extrinsic-Asakusa_Kaminarimon_Gate.yaml
+  intrinsic: False
+
+- file_name: Asakusa_Kaminarimon_Gate_2.mp4
+  extrinsic: extrinsic-Asakusa_Kaminarimon_Gate.yaml
+  intrinsic: False
+
+- file_name: Asakusa_Kaminarimon_Gate_3.mp4
+  extrinsic: extrinsic-Asakusa_Kaminarimon_Gate.yaml
+  intrinsic: False
+
+- file_name: Asakusa_Kaminarimon_Gate_4.mp4
+  extrinsic: extrinsic-Asakusa_Kaminarimon_Gate.yaml
+  intrinsic: False
+
+- file_name: Asakusa_Kaminarimon_Gate_5.mp4
+  extrinsic: extrinsic-Asakusa_Kaminarimon_Gate.yaml
+  intrinsic: False
+
+# -----------------------------------------------------------------------------
+- file_name: Cam34HD_04-28_16-42-13.mp4
+  extrinsic: extrinsic-Cam34HD_1.yaml
+  intrinsic: False
+
+- file_name: Cam34HD_04-28_17-03-13.mp4
+  extrinsic: extrinsic-Cam34HD_1.yaml
+  intrinsic: False
+
+- file_name: Cam34HD_04-28_17-14-42.mp4
+  extrinsic: extrinsic-Cam34HD_2.yaml
+  intrinsic: False
+
+- file_name: Cam34HD_04-28_17-22-37.mp4
+  extrinsic: extrinsic-Cam34HD_2.yaml
+  intrinsic: False
+
+# -----------------------------------------------------------------------------
+- file_name: Shibuya_Scramble_Crossing_Live_Camera_1.mp4
+  extrinsic: extrinsic-Shibuya_Scramble_Crossing_Live_Camera.yaml
+  intrinsic: False
+
+- file_name: Shibuya_Scramble_Crossing_Live_Camera_2.mp4
+  extrinsic: extrinsic-Shibuya_Scramble_Crossing_Live_Camera.yaml
+  intrinsic: False
+
+- file_name: Shibuya_Scramble_Crossing_Live_Camera_3.mp4
+  extrinsic: extrinsic-Shibuya_Scramble_Crossing_Live_Camera.yaml
+  intrinsic: False
+
+- file_name: Shibuya_Scramble_Crossing_Live_Camera_4.mp4
+  extrinsic: extrinsic-Shibuya_Scramble_Crossing_Live_Camera.yaml
+  intrinsic: False
+
+- file_name: Shibuya_Scramble_Crossing_Live_Camera_5.mp4
+  extrinsic: extrinsic-Shibuya_Scramble_Crossing_Live_Camera.yaml
+  intrinsic: False
+
+# -----------------------------------------------------------------------------
+- file_name: Shopping-People-Commerce-Mall-Many-Crowd-Walking_Free_Stock.mp4
+  extrinsic: extrinsic-Shopping-People-Commerce-Mall-Many-Crowd-Walking_Free_Stock.yaml
+  intrinsic: False
+
+# -----------------------------------------------------------------------------
+- file_name: Times_Square-Midtown_Manhattan-New_York_City_1.mp4
+  extrinsic: extrinsic-Times_Square-Midtown_Manhattan-New_York_City.yaml
+  intrinsic: False
+
+- file_name: Times_Square-Midtown_Manhattan-New_York_City_2.mp4
+  extrinsic: extrinsic-Times_Square-Midtown_Manhattan-New_York_City.yaml
+  intrinsic: False
+
+- file_name: Times_Square-Midtown_Manhattan-New_York_City_3.mp4
+  extrinsic: extrinsic-Times_Square-Midtown_Manhattan-New_York_City.yaml
+  intrinsic: False
+
+- file_name: Times_Square-Midtown_Manhattan-New_York_City_4.mp4
+  extrinsic: extrinsic-Times_Square-Midtown_Manhattan-New_York_City.yaml
+  intrinsic: False
+
+- file_name: Times_Square-Midtown_Manhattan-New_York_City_5.mp4
+  extrinsic: extrinsic-Times_Square-Midtown_Manhattan-New_York_City.yaml
+  intrinsic: False
+
+# -----------------------------------------------------------------------------
+- file_name: Times_Square-Manhattan-New_York_City_1.mp4
+  extrinsic: extrinsic-Times_Square-Manhattan-New_York_City.yaml
+  intrinsic: False
+
+- file_name: Times_Square-Manhattan-New_York_City_2.mp4
+  extrinsic: extrinsic-Times_Square-Manhattan-New_York_City.yaml
+  intrinsic: False
+
+- file_name: Times_Square-Manhattan-New_York_City_3.mp4
+  extrinsic: extrinsic-Times_Square-Manhattan-New_York_City.yaml
+  intrinsic: False
+
+- file_name: Times_Square-Manhattan-New_York_City_4.mp4
+  extrinsic: extrinsic-Times_Square-Manhattan-New_York_City.yaml
+  intrinsic: False
+
+- file_name: Times_Square-Manhattan-New_York_City_5.mp4
+  extrinsic: extrinsic-Times_Square-Manhattan-New_York_City.yaml
+  intrinsic: False
+
+# -----------------------------------------------------------------------------

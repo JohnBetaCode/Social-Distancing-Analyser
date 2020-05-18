@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  server:
+    build:
+      context: .
+      args:
+        MODEL_URL: ${MODEL_URL}
+
+    # image: ${IMAGE}
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      PORT: 8000
+      API_TOKEN: ${API_TOKEN}

@@ -1,0 +1,12 @@
+*.pyc
+.vscode
+/media/*.mp4
+/media/*.avi
+/media/*.mov
+/media/*.wmv
+/media/*.jpg
+/media/*.png
+/media/captures/
+/models/ssd_mobilenet_v2_coco_2018_03_29/
+/media/figures/drawings.cdr
+/configs/*.yaml
