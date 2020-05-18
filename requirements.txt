@@ -2,7 +2,7 @@ numpy==1.18.1
 opencv-python==4.2.0.34
 Pillow==7.0.0
 python-multipart==0.0.5
-tensorflow-gpu==1.15.0
+tensorflow-gpu==1.15.2
 h5py
 python_path
 cytoolz
