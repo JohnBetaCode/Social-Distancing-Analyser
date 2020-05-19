@@ -1,9 +1,10 @@
 # =============================================================================
+import numpy as np
 import time
 import math
 import sys
 import cv2
-import os 
+import os
 
 sys.path.append(".") 
 
@@ -19,6 +20,7 @@ from python_utils.vision_utils import create_radar
 from python_utils.vision_utils import image_resize
 from python_utils.vision_utils import Extrinsic
 from python_utils.vision_utils import printlog
+from python_utils.vision_utils import dotline
 
 # =============================================================================
 class SocialDistacing():
@@ -50,6 +52,10 @@ class SocialDistacing():
         self.radar_win_name = "warped_space"
 
     def analyse(self, img_src=None, detections=None):
+
+        if self.extrinsic.M is None or img_src is None:
+            return
+        self.__src_img = img_src.copy()
 
         # ---------------------------------------------------------------------
         # Process detection
@@ -94,20 +100,27 @@ class SocialDistacing():
                         dst_detec["safe"] = False
                         dst_detec["neighbors"].append(idx2)
 
+                        x1, y1 = dst_detec["box_base_src"]
+                        x2, y2 = aux_dst_detec["box_base_src"]
+                        # cv2.line(
+                        #     img=self.__src_img, 
+                        #     pt1=(int(x1), int(y1)), 
+                        #     pt2=(int(x2), int(y2)), 
+                        #     color=(0, 0, 255), thickness=2)
+                        dotline(
+                            src=self.__src_img, 
+                            p1=(int(x1), int(y1)), p2=(int(x2), int(y2)), 
+                            color=(0, 0, 255), thickness=1, Dl=5)
+
         # ---------------------------------------------------------------------
         # Process image to show analysis of social distancing
-        self.__src_img = img_src
-        if img_src is not None:
-            self.__src_img = img_src.copy()
+        # Draw predictions on src image
+        if self.__src_detections is not None:
+            self.__src_img = draw_predictions( 
+                predictions=self.__src_detections,
+                img_src=self.__src_img,
+                normalized=True)
 
-            # Draw predictions on src image
-            if self.__src_detections is not None:
-                self.__src_img = draw_predictions( 
-                    predictions=self.__src_detections,
-                    img_src=self.__src_img,
-                    normalized=True)
-
-        # ---------------------------------------------------------------------
         # Process warped image
 
         self.__dst_img = None
@@ -176,13 +189,8 @@ class SocialDistacing():
         return self.__src_img
 
 # =============================================================================
-def main(argv):
+def main():
     
-    # Load extrinsic from dictionary
-    distance_analyser = SocialDistacing(
-        extrinsic=os.path.join("./configs", "extrinsic.yaml"),
-        safe_tresh=float(os.getenv("SAFE_DISTANCING_TRESHOLD", default=2.0)))
-
     # -------------------------------------------------------------------------
     # Player variables
     WIN_NAME = "Social_Distancing"
@@ -204,32 +212,49 @@ def main(argv):
         threshold=float(os.getenv("MODEL_THRESHOLD", default=0.5)),
         saved_model_path=saved_model, 
         normalized=True)
+    ObjModel.predict(frame=np.zeros((10, 10, 3), dtype=np.uint8))
 
     # -------------------------------------------------------------------------
+    distance_analyser = None
+    extrinsic_file = ""
     while True:
 
         if not media_player._win_pause:
 
-            # Run object detection model and get predictions
             tick = time.time()
-            predictions = ObjModel.predict(frame=media_player.cap_img)
-            
-            # Run social distancing analyser method
-            distance_analyser.analyse(
-                img_src=media_player.cap_img,
-                detections=predictions)
 
-            # Reproduce result of social distancing analyser
-            tock = time.time() - tick
-            media_player.reproduce(
-                img_src=distance_analyser.img, 
-                process_time=tock)
+            if media_player.file_extrinsic != extrinsic_file:
+                extrinsic_file = media_player.file_extrinsic
+                # Load extrinsic from dictionary
+                distance_analyser = SocialDistacing(
+                    extrinsic=os.path.join("./configs", extrinsic_file),
+                    safe_tresh=float(os.getenv("SAFE_DISTANCING_TRESHOLD", 
+                        default=2.0)))
+
+            # Run social distancing analyser method
+            if distance_analyser.extrinsic.M is not None:
+
+                # Run object detection model and get predictions
+                predictions = ObjModel.predict(frame=media_player.cap_img)
+
+                distance_analyser.analyse(
+                    img_src=media_player.cap_img,
+                    detections=predictions)
+
+                # Reproduce result of social distancing analyser
+                tock = time.time() - tick
+                media_player.reproduce(
+                    img_src=distance_analyser.img, 
+                    process_time=tock)
+            else:
+                tock = time.time() - tick
+                media_player.reproduce(process_time=tock)
 
         else:
             media_player.reproduce()
 
 # =============================================================================
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
 
 # =============================================================================
