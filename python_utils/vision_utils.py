@@ -18,9 +18,8 @@ class Extrinsic():
         # Intrinsic Variables 
 
         self._int_path = None if int_file_path is None else os.path.dirname(
-            os.path.abspath(file_path))
-        self._int_file = None if int_file_path is None else  os.path.basename(
-            file_path)
+            os.path.abspath(int_file_path))
+        self._int_file = None if int_file_path is None else self._int_path
         self._intrinsic = None if int_file_path is None else read_intrinsic_params(
             CONF_PATH=self._int_path, FILE_NAME=self._int_file)
 
@@ -446,7 +445,7 @@ def image_resize(image, width=None, height=None, inter=cv2.INTER_AREA):
     # return the resized image
     return resized
 
-def create_radar(size=300, div=30, color=(0, 0, 255), img=None, thickness=1):
+def create_radar(size=300, div=30, color=(0, 0, 255), img=None, thickness=1, Dl=6):
     """
         Create radar image
         Args:
@@ -478,9 +477,13 @@ def create_radar(size=300, div=30, color=(0, 0, 255), img=None, thickness=1):
     for i in range(0, radar_img.shape[1], int(radar_img.shape[1]/(div+1))):
         cv2.line(img=radar_img, pt1=(i , 0), pt2=(i, radar_img.shape[0]), 
             color=color, thickness=thickness)
+        # dotline(src=radar_img, p1=(i , 0), p2=(i, radar_img.shape[0]), 
+        #     color=(0, 255, 0), thickness=thickness, Dl=Dl)
     for i in range(0, radar_img.shape[0], int(radar_img.shape[0]/(div+1))):
         cv2.line(img=radar_img, pt1=(0 , i), pt2=(radar_img.shape[1], i), 
             color=color, thickness=thickness)
+        # dotline(src=radar_img, p1=(0 , i), p2=(radar_img.shape[1], i), 
+        #     color=(0, 255, 0), thickness=thickness, Dl=Dl)
 
     return radar_img
 
@@ -624,7 +627,7 @@ def draw_predictions(img_src, predictions, normalized=False):
             w = x2 - x; h = y2 - y
             cen = [int(x + w / 2), int(y + h / 2)]
 
-            cv2.circle(img_src, tuple(cen), 2, (0, 0, 255), 2)
+            cv2.circle(img_src, tuple(cen), 2, (255, 255, 255), -1)
             cv2.rectangle(
                 img_src, (x, y), 
                 (x2, y2), 
@@ -632,7 +635,7 @@ def draw_predictions(img_src, predictions, normalized=False):
                 2)
 
             cen = [int(x + w / 2), int(y + h)]
-            cv2.circle(img_src, tuple(cen), 2, (0, 255, 255), 2)
+            cv2.circle(img_src, tuple(cen), 2, (0, 255, 255), -1)
 
     return img_src
 
@@ -689,6 +692,7 @@ def get_base_predictions(predictions):
             pred["idx"] = idx
             pred["safe"] = True
             pred["neighbors"] = []
+            pred["box_base_src"] = (cen[0], y2)
 
     return predictions
 
