@@ -208,9 +208,14 @@ class calibrator():
             returns:
         """
 
-        # Update bird/sky view window components
         self._win_bird_event = True
 
+        if event == cv2.EVENT_RBUTTONDOWN:
+            self.bird_pts = []
+            self.bird_mouse_current_pos = [0, 0]
+            return 
+
+        # Update bird/sky view window components
         if self.img_sky is not None:
             x = int((x/self.img_sky.shape[1])*self._win_bird_width)
             y = int((y/self.img_sky.shape[0])*self._win_bird_height)
@@ -496,7 +501,7 @@ class calibrator():
                     msg_type="ERROR")
         else:
             printlog(
-                msg="No extrinsic file {} to load data".format(
+                msg="No extrinsic file {}".format(
                     self._ext_file), msg_type="WARN")
 
     def _save_extrinsic(self):
@@ -801,22 +806,22 @@ def main(argv):
     # -------------------------------------------------------------------------
     # Read user input
     try:
-        opts, args = getopt.getopt(argv,"hs:e:i:", 
-            ["source=", "extfile=", "intfile="])
+        opts, args = getopt.getopt(argv,"hv:e:i:", 
+            ["video=", "extfile=", "intfile="])
     except getopt.GetoptError:
-        printlog('calibrate_extrinsic.py -s <source_file> -e '
+        printlog('calibrate_extrinsic.py -v <video_source_file> -e '
             '<extrinsic_file> -i <intrinsic_file>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            printlog('calibrate_extrinsic.py -s <source_file> -e '
+            printlog('calibrate_extrinsic.py -v <video_source_file> -e '
                 '<extrinsic_file> -i <intrinsic_file>')
             sys.exit()
         elif opt in ("-e", "--extrinsic"):
             extrinsic_file = arg
         elif opt in ("-i", "--intrinsic"):
             intrinsic_file = arg
-        elif opt in ("-s", "--src"):
+        elif opt in ("-v", "--video"):
             source_file = arg
 
     # -------------------------------------------------------------------------
@@ -828,8 +833,7 @@ def main(argv):
     if source_file is None:
         files = glob.glob("./media/*.mp4")
         if not len(files):
-            printlog(msg="File {} no found".format(file_name), 
-                msg_type="ERROR")
+            printlog(msg="File {} no found", msg_type="ERROR")
             return 2
         file_default = os.path.basename(files[0])
 
