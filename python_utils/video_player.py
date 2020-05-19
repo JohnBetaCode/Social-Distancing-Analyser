@@ -68,9 +68,14 @@ class Player():
         self._cap_fourcc = None         # Video codec
         self._cap_frame_count = 0       # Number of frames in video
         
+        # Current file parameters from yaml conf file
+        self.file_name = None
+        self.file_intrinsic = None
+        self.file_extrinsic = None
+
         # Start player
         self._start_capture()
-        
+
     def _read_media_source(self, media_list):
         """
             read video media sources specified in file media_list located in
@@ -119,8 +124,7 @@ class Player():
             returns:
         """
 
-        # Create a VideoCapture object and read from input file
-        file_name = self._src_list[cap_idx]["file_name"]
+        self.file_name = file_name = self._src_list[cap_idx]["file_name"]
 
         # Check video file existence
         if not os.path.isfile(os.path.join(
@@ -134,11 +138,14 @@ class Player():
         self._cap = cv2.VideoCapture(os.path.join(
             self._src_path, file_name))
 
-        # Check if camera opened successfully
+        # Check if video was opened successfully
         if not self._cap.isOpened(): 
             printlog(msg="Error opening video stream or file {}".format(
                     self._src_list[cap_idx]["file_name"]), msg_type="ERROR")
             exit()
+
+        self.file_intrinsic = self._src_list[cap_idx]["intrinsic"]
+        self.file_extrinsic = self._src_list[cap_idx]["extrinsic"]
 
         # Get video properties 
         self._cap_frame_avi_ratio = self._cap.get(cv2.CAP_PROP_FRAME_COUNT)
@@ -343,30 +350,6 @@ class Player():
         # Show player window and video capture frame
         cv2.imshow(self._win_name, self._win_img)
         self._key_action(key=cv2.waitKey(int(twait)))
-
-class Recorder():
-
-    def __init__(self, fine_name, file_path):
-        
-    # Define the codec and create VideoWriter object.The output is stored in 
-    # 'outpy.avi' file. Define the fps to be equal to 10. Also frame size is passed.
-	# self._cap = cv2.VideoWriter(
-    #     'outpy.avi',
-    #     cv2.VideoWriter_fourcc('M','J','P','G'), 
-    #     10, 
-    #     (frame_width,frame_height))
-        pass
-
-    def start_capture(self):
-        pass
-
-    def end_capture(self):
-
-        # Write the frame into the file 'output.avi'
-        out.write(frame)
-
-    def record_capture(self, dts_img):
-        pass
 
 # =============================================================================
 def main(argv):
