@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.2-cudnn7-devel
+FROM nvidia/cuda:10.2-cudnn7-devel AS builder
 
 ARG CMAKE_VERSION=3.17.2
 ARG OPENCV_VERSION=4.3.0
@@ -43,5 +43,13 @@ RUN curl -LOk https://github.com/Davidnet/darknet/archive/master.tar.gz && \
     cd darknet-master && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib/x86_64-linux-gnu/libcuda.so.1 && \
     ./build.sh && \
-    rm -rf /usr/lib/x86_64-linux-gnu/libcuda.so.1 && \
-    curl -LOk ${YOLO_WEIGHTS_URL} 
+    rm -rf /usr/lib/x86_64-linux-gnu/libcuda.so.1 && cd /usr/src/app \
+    rm -rf master.tar.gz && \
+    cp darknet-master/libdark.so darknet-master/darknet.py . && \
+    mkdir cfg && cp darknet-master/cfg/yolov4.cfg darknet-master/cfg/coco.data cfg/  && \
+    mkdir data && cp darknet-master/data/coco.names data/ && \
+    curl -LOk ${YOLO_WEIGHTS_URL} && \
+    rm -rf darknet-master && \
+    mv libdark.so libdarknet.so
+
+COPY darknet_test.py main.py
