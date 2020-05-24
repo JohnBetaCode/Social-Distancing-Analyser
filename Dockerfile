@@ -50,6 +50,10 @@ RUN curl -LOk https://github.com/Davidnet/darknet/archive/master.tar.gz && \
     mkdir data && cp darknet-master/data/coco.names data/ && \
     curl -LOk ${YOLO_WEIGHTS_URL} && \
     rm -rf darknet-master && \
-    mv libdark.so libdarknet.so
+    mv libdark.so libdarknet.so && \
+    sed -i '0,/8/s//64/' cfg/yolov4.cfg
 
-COPY darknet_test.py main.py
+# ToDO(davidnet): Remove after test
+RUN curl -Lk -o test.jpg https://www.pasionfutbol.com/__export/1581793721580/sites/pasionlibertadores/img/2020/02/15/leo-messi-barcelona-asistencias-mas-que-goles_crop1581792929892.jpg_423682103.jpg
+
+COPY darknet_detector.py .
