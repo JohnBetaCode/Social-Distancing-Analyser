@@ -356,7 +356,7 @@ def overlay_image(l_img, s_img, pos, transparency):
 
 
 def print_text_list(
-    img, tex_list, color=(0, 0, 255), orig=(10, 25), fontScale=0.7, y_jump=30
+    img, tex_list, color=(0, 0, 255), orig=(10, 25), fontScale=0.7, y_jump=25
 ):
     """
         Print a text list on image in desending order
@@ -637,9 +637,9 @@ def draw_predictions(img_src, predictions, normalized=False):
         img_src: `cv2.math` image with components to drawn
     """
 
-    if predictions is not None:
+    if len(predictions):
         for pred in predictions:
-            if pred["name"] != "person":
+            if str(pred["name"]) != "person":
                 continue
 
             x, y, x2, y2 = pred["box"]
@@ -713,19 +713,21 @@ def get_base_predictions(predictions):
     Returns:
     """
 
-    if predictions is not None:
-
+    if len(predictions):
         for idx, pred in enumerate(predictions):
+
             x, y, x2, y2 = pred["box"]
             w = x2 - x
             h = y2 - y
-            cen = [float(x + w / 2.0), float(y + h)]
 
-            pred["box_base"] = cen
+            cen = [float(x + w / 2.0), float(y + h)]
+            pred["box_center"] = cen
             pred["idx"] = idx
             pred["safe"] = True
             pred["neighbors"] = []
-            pred["box_base_src"] = (cen[0], y2)
+            pred["box_base_src"] = [cen[0], y2]
+            pred["box_base_dst"] = None
+            pred["box_base_dst_norm"] = None
 
     return predictions
 
