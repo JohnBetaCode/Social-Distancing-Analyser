@@ -19,12 +19,15 @@ from python_utils.vision_utils import dotline
 
 from darknet_detector import ObjectDetector
 
+# 
 # =============================================================================
 class SocialDistacing:
     def __init__(self, extrinsic, safe_tresh=2.0, intrinsic=None, draw_warped=True):
 
-        # NOTE: Intrinsic params no supported yet in extrinsic
+        # TODO NOTE: Intrinsic params no supported yet in extrinsic
         self.extrinsic = Extrinsic(ext_file_path=extrinsic, int_file_path=None)
+        self.full_extrinsic = False if (self.extrinsic.Mdst_pts["p1"][0] == 0 and 
+            self.extrinsic.Mdst_pts["p1"][0] == 0) else True
 
         self.safe_tresh = safe_tresh
 
@@ -49,6 +52,17 @@ class SocialDistacing:
         self.__src_img = img_src.copy()
 
         # ---------------------------------------------------------------------
+        if not self.full_extrinsic:
+            pts = np.array([
+                self.extrinsic.Mpts["p1"], 
+                self.extrinsic.Mpts["p2"],
+                self.extrinsic.Mpts["p3"],
+                self.extrinsic.Mpts["p4"]], np.int32)
+            cv2.polylines(
+                img=self.__src_img, pts=[pts], isClosed=True, color=(255, 0, 0), thickness=2
+            )
+
+        # ---------------------------------------------------------------------
         # Process detection
         if len(detections):
 
@@ -71,15 +85,26 @@ class SocialDistacing:
                 src_detec["box_base_dst"] = self.extrinsic.pt_src_to_dst(
                     src_pt=src_detec["box_base_src"]
                 )
-
                 src_detec["box_base_dst_norm"] = (
                     src_detec["box_base_dst"][0] / self.extrinsic.dst_warp_size[0],
                     src_detec["box_base_dst"][1] / self.extrinsic.dst_warp_size[1],
                 )
 
+                if not self.full_extrinsic:
+                    # Check if the current coordinates are inside the polygon area
+                    ValidPoint = cv2.pointPolygonTest(
+                        contour=np.array(list(self.extrinsic.Mdst_pts.values()), np.int32),
+                        pt=tuple(src_detec["box_base_dst"]),
+                        measureDist=True,
+                    )
+                    if ValidPoint < 0:
+                        src_detec["in_cnt"] = False
+
         lines = []
         for detec in self.__detections:
             for aux_detec in self.__detections:
+                if not detec["in_cnt"] or not aux_detec["in_cnt"]:
+                    continue
                 if detec["idx"] != aux_detec["idx"]:
 
                     x1, y1 = detec["box_base_dst"]
@@ -106,7 +131,7 @@ class SocialDistacing:
                         x1, y1 = detec["box_base_src"]
                         x2, y2 = aux_detec["box_base_src"]
                         line = [x1, y1, x2, y2]
-                        
+
                         if line not in lines:
                             dotline(
                                 src=self.__src_img,
@@ -119,7 +144,7 @@ class SocialDistacing:
                             lines.append([x1, y1, x2, y2])
                             lines.append([x2, y2, x1, y1])
 
-                            pt_cnt = (int(x1 + (x2-x1)/2), int(y1 + (y2-y1)/2))
+                            pt_cnt = (int(x1 + (x2 - x1) / 2), int(y1 + (y2 - y1) / 2))
                             cv2.putText(
                                 img=self.__src_img,
                                 text="{:.2f}".format(d),
@@ -161,7 +186,19 @@ class SocialDistacing:
     def draw_analysis(self):
 
         radar_img = self.radar_img.copy()
-        dst_img = image_resize(image=self.__dst_img.copy(), height=radar_img.shape[0])
+
+        pts = np.array([
+                self.extrinsic.Mdst_pts["p1"], 
+                self.extrinsic.Mdst_pts["p2"],
+                self.extrinsic.Mdst_pts["p3"],
+                self.extrinsic.Mdst_pts["p4"]], np.int32)
+        dst_img = self.__dst_img.copy()
+        if not self.full_extrinsic:
+            cv2.polylines(
+                img=dst_img, pts=[pts], isClosed=True, color=(255, 0, 0), thickness=2
+            )
+        dst_img = image_resize(image=dst_img, height=radar_img.shape[0])
+        
 
         # Draw warped space images
         if self.draw_warped:
@@ -177,6 +214,7 @@ class SocialDistacing:
 
             cv2.imshow("{}(radar)".format(self.radar_win_name), radar_img)
             cv2.imshow("{}".format(self.radar_win_name), dst_img)
+
 
     def draw_detection(
         self, img, detection, closest=True, radius=3, draw_neighbors=True
@@ -220,6 +258,9 @@ class SocialDistacing:
     @property
     def img(self):
         return self.__src_img
+
+
+# class VideoRecorder():
 
 
 # =============================================================================

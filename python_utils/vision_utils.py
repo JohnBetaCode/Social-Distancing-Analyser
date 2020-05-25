@@ -653,12 +653,18 @@ def draw_predictions(img_src, predictions, normalized=False):
             h = y2 - y
             cen = [int(x + w / 2), int(y + h / 2)]
 
+            color = (0, 0, 255)
+            if pred["safe"]:
+                color = (0, 255, 0)
+            if not pred["in_cnt"]:
+                color = (150, 150, 150)
+
             cv2.circle(img_src, tuple(cen), 2, (255, 255, 255), -1)
             cv2.rectangle(
                 img_src,
                 (x, y),
                 (x2, y2),
-                (0, 255, 0) if pred["safe"] else (0, 0, 255),
+                color,
                 2,
             )
 
@@ -749,6 +755,7 @@ def get_base_predictions(predictions):
             pred["box_base_src"] = [cen[0], y2]
             pred["box_base_dst"] = None
             pred["box_base_dst_norm"] = None
+            pred["in_cnt"] = True
 
     return predictions
 
