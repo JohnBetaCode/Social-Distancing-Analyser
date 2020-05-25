@@ -61,3 +61,5 @@ RUN python3 -m pip install pyaml opencv-python
 COPY darknet_detector.py .
 COPY python_utils .
 COPY social_distancing.py .
+
+ENTRYPOINT ["/bin/bash", "-c", "source configs/env.sh && python3 social_distancing.py"]
