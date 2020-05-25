@@ -56,4 +56,8 @@ RUN curl -LOk https://github.com/Davidnet/darknet/archive/master.tar.gz && \
 # ToDO(davidnet): Remove after test
 RUN curl -Lk -o test.jpg https://www.pasionfutbol.com/__export/1581793721580/sites/pasionlibertadores/img/2020/02/15/leo-messi-barcelona-asistencias-mas-que-goles_crop1581792929892.jpg_423682103.jpg
 
+RUN python3 -m pip install pyaml opencv-python
+
 COPY darknet_detector.py .
+COPY python_utils .
+COPY social_distancing.py .
