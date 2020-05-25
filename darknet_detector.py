@@ -10,6 +10,15 @@ DEF_CONF: bytes = f"{darknet_module_dir}/cfg/yolov4.cfg".encode("ascii")
 # DEF_CONF: bytes =   f'{darknet_module_dir}/cfg/yolov4-slowmemory.cfg'.encode('ascii')
 DEF_W: bytes = f"{darknet_module_dir}/yolov4.weights".encode("ascii")
 DEF_DATA: bytes = f"{darknet_module_dir}/cfg/coco.data".encode("ascii")
+IMG_SIZE: int = 608
+
+
+def convertBack(x, y, w, h):
+    xmin = int(round(x - (w / 2)))
+    xmax = int(round(x + (w / 2)))
+    ymin = int(round(y - (h / 2)))
+    ymax = int(round(y + (h / 2)))
+    return xmin / IMG_SIZE, ymin / IMG_SIZE, xmax / IMG_SIZE, ymax / IMG_SIZE
 
 
 class ObjectDetector(object):
@@ -32,12 +41,34 @@ class ObjectDetector(object):
             dn.network_width(self._net), dn.network_height(self._net), 3
         )
 
-    def predict(self, img_array, **kwargs):
+    def predict(self, img_array, thresh=0.5, hier_thresh=0.5, nms=0.45):
         """
         Observations: Assert that the image have the correct shapes.
         """
         dn.copy_image_from_bytes(self._darknet_image, img_array.tobytes())
-        return dn.detect_image(self._net, self._metadata, self._darknet_image, **kwargs)
+
+        detections = dn.detect_image(
+            self._net, self._metadata, self._darknet_image, thresh, hier_thresh, nms
+        )
+
+        predictions = []
+        for detection in detections:
+            x, y, w, h = detection[2]
+            xmin, ymin, xmax, ymax = convertBack(x, y, w, h)
+            if xmax - xmin > 0.9 or ymax - ymin > 0.9:
+                continue
+            name = str(detection[0], encoding="ascii")
+            if name != "person":
+                continue
+            predictions.append(
+                {
+                    "name": name,
+                    "confidence": detection[1],
+                    "box": (xmin, ymin, xmax, ymax),
+                }
+            )
+
+        return predictions
 
 
 if __name__ == "__main__":
@@ -49,9 +80,11 @@ if __name__ == "__main__":
 
     custom_image_bgr = cv2.imread("test.jpg")  # use: detect(,,imagePath,)
     custom_image = cv2.cvtColor(custom_image_bgr, cv2.COLOR_BGR2RGB)
-    custom_image = cv2.resize(custom_image, (608, 608), interpolation=cv2.INTER_LINEAR)
+    custom_image = cv2.resize(
+        custom_image, (IMG_SIZE, IMG_SIZE), interpolation=cv2.INTER_LINEAR
+    )
 
     # Prediction
     response_object = detector.predict(
-        custom_image, thresh=0.9, hier_thresh=0.5, nms=0.45
+        custom_image, thresh=0.3, hier_thresh=0.5, nms=0.45
     )
