@@ -677,7 +677,7 @@ class calibrator:
         for pt in self._Mpts.values():
             if pt is None:
                 printlog(
-                    msg="No transformation matrix yet".format(key), msg_type="WARN"
+                    msg="No transformation matrix yet", msg_type="WARN"
                 )
                 return
 
@@ -926,7 +926,7 @@ def main(argv):
     # -------------------------------------------------------------------------
     # Read user input
     try:
-        opts, args = getopt.getopt(argv, "hv:e:i:", ["video=", "extfile=", "intfile="])
+        opts, _ = getopt.getopt(argv, "hv:e:i:", ["video=", "extfile=", "intfile="])
     except getopt.GetoptError:
         printlog(
             "calibrate_extrinsic.py -v <video_source_file> -e "
