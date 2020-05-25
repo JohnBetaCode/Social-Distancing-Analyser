@@ -555,7 +555,10 @@ class calibrator:
             self.ppmy = float(dm / dp)
             printlog(
                 msg="Vertical relation updated, new values are "
-                "ppmx={:.2f}[pix/m], ppmy={:.2f}[pix/m]".format(self.ppmx, self.ppmy),
+                "ppmx={:.2f}[pix/m], ppmy={:.2f}[pix/m]".format(
+                    self.ppmx if self.ppmx is not None else 0.0,
+                    self.ppmy if self.ppmy is not None else 0.0,
+                ),
                 msg_type="USER",
             )
         elif relation == "dh":
@@ -676,9 +679,7 @@ class calibrator:
         # calibration
         for pt in self._Mpts.values():
             if pt is None:
-                printlog(
-                    msg="No transformation matrix yet", msg_type="WARN"
-                )
+                printlog(msg="No transformation matrix yet", msg_type="WARN")
                 return
 
         # Get space transformation matrix
