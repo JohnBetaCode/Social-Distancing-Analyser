@@ -234,7 +234,7 @@ class Player:
         print_text_list(
             img=img,
             tex_list=text_list,
-            color=(255, 0, 255),
+            color=(255, 255, 255),
             orig=(10, 25),
             fontScale=0.4,
         )
