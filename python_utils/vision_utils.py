@@ -662,6 +662,27 @@ def draw_predictions(img_src, predictions, normalized=False):
                 2,
             )
 
+            cv2.putText(
+                img=img_src,
+                text=str(round(pred["confidence"], 2)),
+                org=(x, y - 7),
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale=0.3,
+                color=(0, 0, 0),
+                thickness=2,
+                lineType=cv2.LINE_AA,
+            )
+            cv2.putText(
+                img=img_src,
+                text=str(round(pred["confidence"], 2)),
+                org=(x, y - 7),
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale=0.3,
+                color=(255, 255, 255),
+                thickness=1,
+                lineType=cv2.LINE_AA,
+            )
+
             cen = [int(x + w / 2), int(y + h)]
             cv2.circle(img_src, tuple(cen), 2, (0, 255, 255), -1)
 
