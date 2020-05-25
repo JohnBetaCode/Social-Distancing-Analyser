@@ -77,6 +77,7 @@ class SocialDistacing:
                     src_detec["box_base_dst"][1] / self.extrinsic.dst_warp_size[1],
                 )
 
+        lines = []
         for detec in self.__detections:
             for aux_detec in self.__detections:
                 if detec["idx"] != aux_detec["idx"]:
@@ -104,14 +105,41 @@ class SocialDistacing:
 
                         x1, y1 = detec["box_base_src"]
                         x2, y2 = aux_detec["box_base_src"]
-                        dotline(
-                            src=self.__src_img,
-                            p1=(x1, y1),
-                            p2=(x2, y2),
-                            color=(0, 0, 102),
-                            thickness=1,
-                            Dl=5,
-                        )
+                        line = [x1, y1, x2, y2]
+                        
+                        if line not in lines:
+                            dotline(
+                                src=self.__src_img,
+                                p1=(x1, y1),
+                                p2=(x2, y2),
+                                color=(0, 0, 102),
+                                thickness=1,
+                                Dl=5,
+                            )
+                            lines.append([x1, y1, x2, y2])
+                            lines.append([x2, y2, x1, y1])
+
+                            pt_cnt = (int(x1 + (x2-x1)/2), int(y1 + (y2-y1)/2))
+                            cv2.putText(
+                                img=self.__src_img,
+                                text="{:.2f}".format(d),
+                                org=pt_cnt,
+                                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                                fontScale=0.3,
+                                color=(0, 0, 0),
+                                thickness=2,
+                                lineType=cv2.LINE_AA,
+                            )
+                            cv2.putText(
+                                img=self.__src_img,
+                                text="{:.2f}".format(d),
+                                org=pt_cnt,
+                                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                                fontScale=0.3,
+                                color=(0, 0, 255),
+                                thickness=1,
+                                lineType=cv2.LINE_AA,
+                            )
 
         # ---------------------------------------------------------------------
         # Process image to show analysis of social distancing
@@ -121,6 +149,7 @@ class SocialDistacing:
                 predictions=self.__detections, img_src=self.__src_img, normalized=True,
             )
 
+        # ---------------------------------------------------------------------
         # Process warped image
         self.__dst_img = None
         if img_src is not None:
