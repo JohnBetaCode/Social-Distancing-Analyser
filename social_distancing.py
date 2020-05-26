@@ -14,26 +14,33 @@ from python_utils.vision_utils import norm_predictions
 from python_utils.vision_utils import create_radar
 from python_utils.vision_utils import image_resize
 from python_utils.vision_utils import Extrinsic
+from python_utils.vision_utils import Recorder
 from python_utils.vision_utils import printlog
 from python_utils.vision_utils import dotline
 
 from darknet_detector import ObjectDetector
 
-# 
 # =============================================================================
 class SocialDistacing:
     def __init__(self, extrinsic, safe_tresh=2.0, intrinsic=None, draw_warped=True):
 
         # TODO NOTE: Intrinsic params no supported yet in extrinsic
         self.extrinsic = Extrinsic(ext_file_path=extrinsic, int_file_path=None)
-        self.full_extrinsic = False if (self.extrinsic.Mdst_pts["p1"][0] == 0 and 
-            self.extrinsic.Mdst_pts["p1"][0] == 0) else True
+        self.full_extrinsic = (
+            False
+            if (
+                self.extrinsic.Mdst_pts["p1"][0] == 0
+                and self.extrinsic.Mdst_pts["p1"][0] == 0
+            )
+            else True
+        )
 
         self.safe_tresh = safe_tresh
 
         self.__detections = []
         self.__src_img = None
         self.__dst_img = None
+        self.__radar_img = None
 
         self.draw_warped = draw_warped
 
@@ -53,13 +60,21 @@ class SocialDistacing:
 
         # ---------------------------------------------------------------------
         if not self.full_extrinsic:
-            pts = np.array([
-                self.extrinsic.Mpts["p1"], 
-                self.extrinsic.Mpts["p2"],
-                self.extrinsic.Mpts["p3"],
-                self.extrinsic.Mpts["p4"]], np.int32)
+            pts = np.array(
+                [
+                    self.extrinsic.Mpts["p1"],
+                    self.extrinsic.Mpts["p2"],
+                    self.extrinsic.Mpts["p3"],
+                    self.extrinsic.Mpts["p4"],
+                ],
+                np.int32,
+            )
             cv2.polylines(
-                img=self.__src_img, pts=[pts], isClosed=True, color=(255, 0, 0), thickness=2
+                img=self.__src_img,
+                pts=[pts],
+                isClosed=True,
+                color=(255, 0, 0),
+                thickness=2,
             )
 
         # ---------------------------------------------------------------------
@@ -93,7 +108,9 @@ class SocialDistacing:
                 if not self.full_extrinsic:
                     # Check if the current coordinates are inside the polygon area
                     ValidPoint = cv2.pointPolygonTest(
-                        contour=np.array(list(self.extrinsic.Mdst_pts.values()), np.int32),
+                        contour=np.array(
+                            list(self.extrinsic.Mdst_pts.values()), np.int32
+                        ),
                         pt=tuple(src_detec["box_base_dst"]),
                         measureDist=True,
                     )
@@ -187,18 +204,21 @@ class SocialDistacing:
 
         radar_img = self.radar_img.copy()
 
-        pts = np.array([
-                self.extrinsic.Mdst_pts["p1"], 
+        pts = np.array(
+            [
+                self.extrinsic.Mdst_pts["p1"],
                 self.extrinsic.Mdst_pts["p2"],
                 self.extrinsic.Mdst_pts["p3"],
-                self.extrinsic.Mdst_pts["p4"]], np.int32)
+                self.extrinsic.Mdst_pts["p4"],
+            ],
+            np.int32,
+        )
         dst_img = self.__dst_img.copy()
         if not self.full_extrinsic:
             cv2.polylines(
                 img=dst_img, pts=[pts], isClosed=True, color=(255, 0, 0), thickness=2
             )
         dst_img = image_resize(image=dst_img, height=radar_img.shape[0])
-        
 
         # Draw warped space images
         if self.draw_warped:
@@ -212,9 +232,11 @@ class SocialDistacing:
                         img=radar_img, detection=dst_pt, closest=True
                     )
 
+            self.__dst_img = dst_img
             cv2.imshow("{}(radar)".format(self.radar_win_name), radar_img)
             cv2.imshow("{}".format(self.radar_win_name), dst_img)
 
+        self.__radar_img = radar_img
 
     def draw_detection(
         self, img, detection, closest=True, radius=3, draw_neighbors=True
@@ -259,9 +281,13 @@ class SocialDistacing:
     def img(self):
         return self.__src_img
 
+    @property
+    def img_dst(self):
+        return self.__dst_img
 
-# class VideoRecorder():
-
+    @property
+    def img_radar(self):
+        return self.__radar_img
 
 # =============================================================================
 def main():
@@ -269,8 +295,9 @@ def main():
     # -------------------------------------------------------------------------
     # Player variables
     WIN_NAME = "Social_Distancing"
+    PATH = "./media"
     media_player = Player(
-        video_src_file=os.path.join("./media", "data_src.yaml"),
+        video_src_file=os.path.join(PATH, "data_src.yaml"),
         win_name=WIN_NAME,
         media_loop=True,
     )
@@ -278,6 +305,15 @@ def main():
     # -------------------------------------------------------------------------
     # Load object detector model
     detector = ObjectDetector()
+
+    # -------------------------------------------------------------------------
+    recorder_enable = False
+    if recorder_enable:
+        record = Recorder(out_path=PATH, videos_list=[
+            "social_distancing_analyser.avi",
+            "social_distancing_analyser(Warped).avi",
+            "social_distancing_analyser(Radar).avi",
+        ])
 
     # -------------------------------------------------------------------------
     distance_analyser = None
@@ -318,6 +354,20 @@ def main():
                 # Reproduce result of social distancing analyser
                 tock = time.time() - tick
                 media_player.reproduce(img_src=distance_analyser.img, process_time=tock)
+
+                # Record 
+                if recorder_enable:
+                    image_dict={
+                            "social_distancing_analyser.avi": distance_analyser.img,
+                            "social_distancing_analyser(Warped).avi": distance_analyser.img_dst,
+                            "social_distancing_analyser(Radar).avi": distance_analyser.img_radar,
+                        }
+                    image_dict["social_distancing_analyser.avi"] = cv2.resize(
+                        image_dict["social_distancing_analyser.avi"], 
+                        (1280, 700), interpolation=cv2.INTER_LINEAR
+                    )
+                    record.record_captures(image_dict=image_dict)
+
             else:
                 tock = time.time() - tick
                 media_player.reproduce(process_time=tock)

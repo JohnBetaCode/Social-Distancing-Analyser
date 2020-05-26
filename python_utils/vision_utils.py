@@ -124,6 +124,38 @@ class Extrinsic:
 
         return cv2.warpPerspective(dsize=self.dst_warp_size, src=img_src, M=self.M)
 
+class Recorder():
+    def __init__(self, out_path, videos_list=[]):
+
+        self.out_path = out_path
+        self.capture = {video_name: None for video_name in videos_list}
+
+    def start_capture(self, capture, capture_name, img_size, fps=20.):
+        
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        capture = cv2.VideoWriter(
+            os.path.join(self.out_path, capture_name), 
+            fourcc, fps, img_size,
+        )
+
+        return capture
+
+    def record_captures(self, image_dict):
+        
+        for video_name, _ in self.capture.items():
+            if self.capture[video_name] is None:
+                self.capture[video_name] = self.start_capture(
+                    capture=self.capture[video_name], 
+                    capture_name=video_name, 
+                    img_size=(
+                        image_dict[video_name].shape[1], 
+                        image_dict[video_name].shape[0]))
+            self.capture[video_name].write(image_dict[video_name])
+
+    def stop(self):
+        for _, capture in self.capture.items():
+            if capture is not None:
+                capture.release()
 
 # =============================================================================
 # OTHER UTILS - OTHER UTILS - OTHER UTILS - OTHER UTILS - OTHER UTILS - OTHER U
@@ -661,11 +693,7 @@ def draw_predictions(img_src, predictions, normalized=False):
 
             cv2.circle(img_src, tuple(cen), 2, (255, 255, 255), -1)
             cv2.rectangle(
-                img_src,
-                (x, y),
-                (x2, y2),
-                color,
-                2,
+                img_src, (x, y), (x2, y2), color, 2,
             )
 
             cv2.putText(
@@ -761,3 +789,29 @@ def get_base_predictions(predictions):
 
 
 # =============================================================================
+if __name__ == "__main__":
+
+    cap = cv2.VideoCapture(2)
+    
+    image_dict = {"1.avi": None, "2.avi": None}
+    recorder = Recorder(
+        out_path=os.path.dirname(sys.argv[0]), 
+        videos_list=image_dict.keys())
+
+    while(True):
+        # Capture frame-by-frame
+        ret, frame = cap.read()
+
+        image_dict["1.avi"] = frame.copy()
+        image_dict["2.avi"] = frame.copy()
+        recorder.record_captures(image_dict=image_dict)
+
+        # Display the resulting frame
+        cv2.imshow('frame', frame)
+        if cv2.waitKey(int(1000/30)) & 0xFF == ord('q'):
+            recorder.stop()
+            break
+
+    # When everything done, release the capture
+    cap.release()
+    cv2.destroyAllWindows()
