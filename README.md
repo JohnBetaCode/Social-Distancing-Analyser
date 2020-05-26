@@ -11,7 +11,7 @@ Here you have the code and everything that you'll need to perform your own intri
 **Status**: Archive (code is provided as-is, no updates expected)
 
 <p align="center">
-<img src="./media/figures/gif_sample.gif" alt="drawing" width="1000"/>
+<img src="./media/figures/social_distancing_demo.gif" alt="drawing" width="1000"/>
 </p>
 
 <sub>#computer-vision #Ai #object-detection #YOLO #covid19 #extrinsic #intrinsic #calibration #social-distancing #OpenCV #tensorflow #cuda #nvidia</sub>
@@ -100,15 +100,11 @@ Original image view with surface projection drawn           |  warped space from
 ---
 ### **7. Results**
 
- Shopping, People, Commerce, Mall, Many, Crowd, Walking Free Stock video footage YouTube  |  Shopping, People, Commerce, Mall, Many, Crowd, Walking Free Stock video footage YouTube
-:-------------------------:|:-------------------------:
-<img src="./media/figures/gif_sample.gif" alt="drawing" width="500"/>    | <img src="./media/figures/gif_sample.gif" alt="drawing" width="500"/> 
-https://www.youtube.com/watch?v=WvhYuDvH17I |https://www.youtube.com/watch?v=WvhYuDvH17I
+ Social_Distancing_Analyzer-Shopping_Mall |  Social_Distancing_Analyzer-Asakusa_Ka... | Social_Distancing_Shibuya_Scramble_Cr...
+:-------------------------:|:-------------------------:|:-------------------------:
+[<img src="https://img.youtube.com/vi/QnXjbAGmS0U/0.jpg" width="300">](https://www.youtube.com/watch?v=QnXjbAGmS0U)    | [<img src="https://img.youtube.com/vi/A3tpgD4N9Gg/0.jpg" width="300">](https://www.youtube.com/watch?v=A3tpgD4N9Gg&t=75s) | [<img src="https://img.youtube.com/vi/enVufs1f-zc/0.jpg" width="300">](https://www.youtube.com/watch?v=enVufs1f-zc)
 
- Shopping, People, Commerce, Mall, Many, Crowd, Walking Free Stock video footage YouTube  |  渋谷 スクランブル交差点 ライブカメラ / Shibuya Scramble Crossing Live Camera
-:-------------------------:|:-------------------------:
-<img src="./media/figures/gif_sample.gif" alt="drawing" width="500"/>    | <img src="./media/figures/gif_sample.gif" alt="drawing" width="500"/> 
-https://www.youtube.com/watch?v=mRe-514tGMg |https://www.youtube.com/watch?v=kQFo1bVV81c
+
 
 <!-- 浅草 雷門 ライブカメラ / Asakusa Kaminarimon Gate Live Camera -->
 <!-- Times Square - Midtown Manhattan, New York City - Times Square Live Camera 24.7 | Subscribe now! -->
