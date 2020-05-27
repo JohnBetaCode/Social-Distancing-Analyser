@@ -4,9 +4,11 @@
 <img src="./media/figures/banner.jpeg" alt="drawing" width="1000"/>  
 </p>
 
-Welcome to a humble social distancing analyzer, this repo was developed by engineers with love and too much free time, they tried to don't die of boring in the global quarantine due to the COVID-19, thank you china! ... 
+Considering the big change that the world is facing, as well as our lives due to the COVID-19, we provide to people and companies a complete open-source tool to analyze the social distancing for streets, parks, offices, and even crowded places like malls, train stations, and others. 
 
-Here you have the code and everything that you'll need to perform your own intrinsic and extrinsic calibration, and run an object detection model to track the people in a warped space and analyze how far or close they are to each to other.
+Here you have the code and everything that you'll need to perform your own intrinsic and extrinsic calibration, and run a YOLOv4 based object detection model to track the people in a warped space and analyze how far or close they are to each other (Social Distancing).
+
+The current pipeline only supports videos, but you can use the base classes, and methods to extend the application to video streamings, pictures and adapt it to your own project. Here, we will explain dependencies, code, and everything that you need to rock and roll!
 
 **Status**: Archive (code is provided as-is, no updates expected)
 
@@ -14,12 +16,12 @@ Here you have the code and everything that you'll need to perform your own intri
 <img src="./media/figures/social_distancing_demo.gif" alt="drawing" width="1000"/>
 </p>
 
-<sub>#computer-vision #Ai #object-detection #YOLO #covid19 #extrinsic #intrinsic #calibration #social-distancing #OpenCV #tensorflow #cuda #nvidia</sub>
+<sub>#computer-vision #Ai #object-detection #YOLO #covid19 #extrinsic #intrinsic #calibration #social-distancing #OpenCV #OpenSource </sub>
 
 ---
-### **1. Install Anaconda Environment**
+### **Install Anaconda Environment**
 
-Anaconda is the preferred method of installing SafeDistanceDetector dependencies on Linux Systems. Anaconda is a data science platform for scientific computing and makes managing machine learning libraries significantly easier. Native installation of these libraries is possible, but native un-installation of these libraries can be significantly painful and introduce significantly much more bloat. which is why We DO not will not be supporting that method of installation.
+Anaconda is the preferred method of installing SafeDistanceDetector dependencies on Linux Systems (Only for Extrinsic and Intrinsic Calibration). Anaconda is a data science platform for scientific computing and makes managing machine learning libraries significantly easier. Native installation of these libraries is possible, but native un-installation of these libraries can be significantly painful and introduce significantly much more bloat. which is why We DO not will not be supporting that method of installation.
 
 To download the installer, follow this link and download the Anaconda platform for Linux x64. https://www.anaconda.com/distribution/#linux.
 
@@ -30,20 +32,29 @@ After installing the platform, you might need to add conda command into your pat
     # Restart your shell
     
 ---
-### **2. Install SafeDistanceDetector Environment**
+### **Install SafeDistanceDetector Environment**
 
-You will now need to create the SocialDistancingAnalyzer environment with the following libraries. After creating the environment, you can activate it to work within the environment. You will not typically need to activate the environment when using this fork, as the scripts will automatically set it for you. If you want to change the name and other behaviors in the scripts, alter ```env.sh``` found in the configs directory.
+You will now need to create the social distancing analyser environment with the required dependencies and libraries (provided in the ```requirements.txt```). 
 
-After creating and activating the environment, you will need to clone the repo and additionally install more dependencies using the Python command. Make sure your environment is active before doing this, or you will be using your system Python!
+To create and to activate the environment, run:
 
-    conda create -n social_distancing_analyser -c main python=3.6.8 cudnn=7.6.5 cudatoolkit=10.0.130
-    conda activate social_distancing_analyser
+    conda create -n distancing_analyser -c main python=3.6.8
+    conda activate distancing_analyser
     python -m pip install -r ./Safe-Distance-Detector/requirements.txt
 
----
-### **3. Intrinsic Calibration (Optional)**
+After this, fork this repo and make sure that your environment is activated and you are in the root path. Again, this environment is only for Intrinsic (If needed) and Extrinsic calibration scripts.
 
-The process of geometric camera calibration (camera resectioning) is a fundamental step for any machine vision and vision robotics applications. The intrinsic parameters, also known as internal parameters, are the parameters intrinsic to the camera itself, such as the focal length and lens distortion. This distortion should be corrected to operate mathematically easier the image on a warped space or in a affine transformation. Unfortunately, the result of the calibration process can vary a lot depending on various factors.
+---
+### **Build and Run Docker Image**
+
+The object detection model pipeline is based on [YOLOv4](https://github.com/AlexeyAB/darknet) and its dependencies, compilation, and configuration are packaged in a Docker Image. Before continuing, make sure you have [Docker](https://docs.docker.com/get-docker/), [Nvidia Docker](https://github.com/NVIDIA/nvidia-docker), and **440 Nvidia Drivers**.
+
+To run the Social Distancing Analyser Docker Script, just run the bash script ```start.sh```. If it's the first time probably is going to take a while, go for a soda and watch a series chapter or have a look at the meme zone.
+
+---
+### **Intrinsic Calibration (Optional)**
+
+The process of geometric camera calibration is a fundamental step for any machine vision and vision robotics applications. The intrinsic parameters, also known as internal parameters, are the parameters intrinsic to the camera itself, such as the focal length and lens distortion. This distortion should be corrected to operate mathematically easier the image on a warped space or in a affine transformation. Unfortunately, the result of the calibration process can vary a lot depending on various factors.
 
 <p align="center">
 <img src ="./media/figures/cam_calibration.jpg" alt="drawing" width="1000"/>
@@ -76,7 +87,7 @@ If the calibrations succeed you get a [ **intrinsic.yaml**](https://github.com/J
 You can use the scripts of the next sections to validate how well your calibration result is. However, if you'll use camera surveillance streamings or security cameras is possible than these already give you an undistorted image, so the intrinsic calibration process is not needed, and you just lost your time reading this section. 
 
 ---
-### **4. Extrinsic Calibration**
+### **Extrinsic Calibration**
 
 The extrinsic parameters, also known as external parameters or camera pose, are the parameters used to describe the transformation between the camera and its external world. What you are gonna do here is use a dirty trick to transform the 3D image view space in a 2D space.
 
@@ -92,15 +103,15 @@ Original image view with surface projection drawn           |  warped space from
 
 
 ---
-### **5. Object Detector**
+### **Object Detector**
 
 ---
-### **6. Social Distancing Inspector**
+### **Social Distancing Inspector**
 
 ---
-### **7. Results**
+### **Results**
 
- Social_Distancing_Analyzer-Shopping_Mall |  Social_Distancing_Analyzer-Asakusa_Ka... | Social_Distancing_Shibuya_Scramble_Cr...
+ Social_Distancing_Analyzer-Shopping_Mall |  Social_Distancing_Analyzer-Asakusa_Ka... | Social_Distancing_Analyzer-Shibuya_Sc...
 :-------------------------:|:-------------------------:|:-------------------------:
 [<img src="https://img.youtube.com/vi/QnXjbAGmS0U/0.jpg" width="300">](https://www.youtube.com/watch?v=QnXjbAGmS0U)    | [<img src="https://img.youtube.com/vi/A3tpgD4N9Gg/0.jpg" width="300">](https://www.youtube.com/watch?v=A3tpgD4N9Gg&t=75s) | [<img src="https://img.youtube.com/vi/enVufs1f-zc/0.jpg" width="300">](https://www.youtube.com/watch?v=enVufs1f-zc)
 
@@ -111,11 +122,41 @@ Original image view with surface projection drawn           |  warped space from
 <!-- EarthCam Live: Times Square in 4K -->
 
 ---
-### **8. Shortcomings and Improvements**
+### **Shortcomings and Improvements**
 
 * Customize, perform or improve object detection model to detect better the people under different scenarios. 
 * Object detection pipelines or models could have better performance.
 * General gui code optimizations and improvements
+
+---
+### **Contributing**
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+### **License**
+
+Do whatever you want!
+
+---
+### **Show your support**
+
+Give a ⭐️ if this project helped you!
+
+
+---
+### **Contact and developers**
+
+💀 [John A Betancourt G](https://www.linkedin.com/in/john-betancourt-345557129/), [GitHub](https://github.com/JohnBetaCode), Email: john.betancourt93@gmail.com
+
+💉 [David G Cardozo B](https://www.linkedin.com/in/davidcardozo/), [GitHub](https://github.com/Davidnet), Email: david@kiwicampus.com
+
+🚕 [Camilo A Alvis B](https://www.linkedin.com/in/camiloalvis/), [GitHub](https://github.com/kmilo7204), Email: kmilo7204@gmail.com
+
 
 ---
 ### **Meme Zone**
@@ -129,6 +170,8 @@ Wash your hands |
 Use face mask  |  Keep your distance
 :-------------------------:|:-------------------------:
 <img src="https://media.giphy.com/media/TdR5SFrzNZoPdeVKtD/giphy.gif" alt="drawing" height="300"/> | <img src="https://gif-finder.com/wp-content/uploads/2020/04/Social-distancing.gif" alt="drawing" height="300"/> 
+
+We appreciate the chance to help the world, thank you China! ... 
 
 ---
 ### **Other Projects**
@@ -150,13 +193,3 @@ Use face mask  |  Keep your distance
 <p align="center">
 <img src="./media/figures/logo.jpg" alt="drawing" width="250"/> 
 </p>
-
-<!-- 
-procesamiento de imagenes para analisis de distanciamento social usando sistema embebido
-computer vision for social distancing analysis using an embedded AI computing device
-
-areas a tratar o keywords: Ai, computer vision, Object detections 
-(TensorRT, YOLO), OpenCV (Intrinsic, Extrinsic), Python, Git, JetsonTx2 
-(CUDA, Nvidia), Virtual Enviroment, Social-distancing, COVID-19.
-
- -->
