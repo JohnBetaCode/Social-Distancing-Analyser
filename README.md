@@ -117,7 +117,7 @@ The social distancing analyzer has a radar window, so, to have the sense in the 
 <img src ="./media/figures/rotating_changing_warped_space.gif" alt="drawing" width="1000"/>
 </p>
 
-Other important issue is that some perspectives can be really difficult due to the camera perspective to the surface, because they are very inclined, so the warped space only will be shown in a small proportion in the radar, to avoid this you can use two extrinsic options, (1) full warped space, or (2) partial warped space. The difference between these, it's that in (1) you are using the whole original image/frame to get the spacial transformation (warped space) in the radar, and in (2) you're not. to switch between these mods, press I key.
+Other important issue is that some perspectives can be really difficult due to the camera perspective to the surface, because they are very inclined, so the warped space only will be shown in a small proportion in the radar, to avoid this you can use two extrinsic options, (1) **full warped space**, or (2) **partial warped space**. The difference between these, it's that in (1) you are using the whole original image/frame to get the spacial transformation (warped space) in the radar, and in (2) you're not. to switch between these mods, press I key.
 
 Full Warped Space...     | Partial Warped Space
 :-------------------------:|:-------------------------:
@@ -129,29 +129,51 @@ Original image view with surface projection drawn           |  warped space from
 :-------------------------:|:-------------------------:
 <img src="./media/figures/extrinsic_original_view.png" alt="drawing" height="400"/> | <img src="./media/figures/extrinsic_warped_view.png" alt="drawing" height="400"/> 
 
-
-
+Once you have the warped space or projection selected, automatically the bird_view window will be drawn and shown, here and now you have to use the cursor to select a vertical and horizontal measure range, objects can be used as a reference. If you don't know the real-world object's measures you have to use your intuition. When you are measuring a vertical or horizontal measure the real value of these in meters is asked in prompt, type the values and continue.
 
  Horizontal measure | Vertical measure   
 :-------------------------:|:-------------------------:
 <img src="./media/figures/extrinsic_warped_view_horizonal_measure.png" alt="drawing" width="500"/>  | <img src="./media/figures/extrinsic_warped_view_vertical_measure.png" alt="drawing" width="500"/> 
 
+Once you have your pixels per meter relation measures, and your warped space press S key to save you extrinsic calibration and press Q key to quit, and follow the next steps, run the social distancing analyzer.
 
 ---
 ### **Object Detector On Docker Image**
 
-We are using [YOLOv4](https://github.com/AlexeyAB/darknet) object detector, here we are not going to explain what is it, or how does it work, there's tons of information to read about it. The only thing that you have to know is that everything is really simple with the docker image, you dont have to download, set and modify files to compile darknet to use Yolo in your aplications, just follow the previous instructions and the bash ```start.sh``` will do everything for you, and of course you can use it for other propouses and your own object detections based project.
+We are using [YOLOv4](https://github.com/AlexeyAB/darknet) object detector model, here we are not going to explain what is it, or how does it work, there's tons of information to read about it. The only thing that you have to know is that everything is really simple with the docker image, you don't have to download, set and modify any file, or compile Darknet by yourself to use Yolo in your applications, just follow the previous instructions and run the bash ```start.sh```, this will do everything for you, and of course, you can use it for other proposes and your own object detections based project.
 
 ---
 ### **Social Distancing Inspector**
 
-The social distancing for now is not real time, due to the object detection model that we are using, we get in an Helios Predator with a GTX1060 GPU almost 8FPS (quite slow), other models or aproches can be explored, but the propuse of this project is only test the computer vision process to aproximate the people location at the space where they are, and get the distances to others, the threshold of distance can vary, as well other parameters in the whole process. The information obtenied from the analyser is not used, depends on you what are you going to do with the data.
+The social distancing for now is not real time due to the object detection model that we are using, we get in an Helios Predator 300 laptop with a GTX1060 GPU almost 8FPS (quite slow), other models or approaches can be explored and better of course, but the propose of this project is only test the computer vision processes to approximate the people location in the space where they are, and get the distances to others, the threshold of distance can vary, as well other parameters in the whole vision process. The information obtained from the analyser is not used, depends on you what are you going to do with the data.
+
+To build your image run:
+
+    docker build -t working_mage .
+
+if you areal ready have the image build run:
+
+    docker run -it -v `pwd`/configs:/usr/src/app/configs -v `pwd`/media:/usr/src/app/media -v `pwd`/python_utils:/usr/src/app/python_utils --rm --gpus all -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1  -v /tmp/.X11-unix:/tmp/.X11-unix working_mage bash
+
+and don't forget run xhost command to visualize user interfaces:
+    
+    xhost +
+
+The social distancing analyzer uses a video media player class, which loads all the videos and gives to the analyzer the extrinsic and intrinsic parameter for every media source specified in the file ```media/data_src.yaml``` which uses the next format:
 
     - file_name: Shopping-People-Commerce.mp4
-      extrinsic: extrinsic-Shopping.yaml
-      intrinsic: False
+      extrinsic: extrinsic-"random_video_name".yaml
+      intrinsic: intrinsic-"random_video_name".yaml [can be false when not calibration]
 
+The media player class will load the video media sources and you can navigate through all these media, using at the same time the social distancing analyzer. The code is well documented, so if you want to modify any parameter like distancing or object confidence thresholds, feel free and proceed.
 
+When you run the analyzer you and there's extrinsic calibration for that media you get three windows:
+
+* Social_Distancing: here you can see object detections bounding boxes, their confidences, distances to other bounding boxes if the distance is under distancing threshold if using partial warped and box is out from warped space, won't be analyzed and it will be drawn on gray.
+
+* Warped_space(Radar): Warped space drawn with style, show detections, and linked to others if applicable.
+
+* Warped_space: Original image drawn in warped space with detections.
 
 
 <p align="center">
@@ -165,18 +187,12 @@ The social distancing for now is not real time, due to the object detection mode
 :-------------------------:|:-------------------------:|:-------------------------:
 [<img src="https://img.youtube.com/vi/QnXjbAGmS0U/0.jpg" width="300">](https://www.youtube.com/watch?v=QnXjbAGmS0U)    | [<img src="https://img.youtube.com/vi/A3tpgD4N9Gg/0.jpg" width="300">](https://www.youtube.com/watch?v=A3tpgD4N9Gg&t=75s) | [<img src="https://img.youtube.com/vi/enVufs1f-zc/0.jpg" width="300">](https://www.youtube.com/watch?v=enVufs1f-zc)
 
-
-
-<!-- 浅草 雷門 ライブカメラ / Asakusa Kaminarimon Gate Live Camera -->
-<!-- Times Square - Midtown Manhattan, New York City - Times Square Live Camera 24.7 | Subscribe now! -->
-<!-- EarthCam Live: Times Square in 4K -->
-
 ---
 ### **Shortcomings and Improvements**
 
-* Customize, perform or improve object detection model to detect better the people under different and hard scenarios. 
+* Customize, perform or improve object detection model to detect better the people under different and harder scenarios. 
 * Object detection pipelines or models could have better performance.
-* Object tracker when detector lost objects in frame.
+* Object tracker combined with detector when it loses objects in some frame.
 * General gui code optimizations and improvements
 
 ---
