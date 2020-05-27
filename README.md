@@ -4,13 +4,11 @@
 <img src="./media/figures/banner.jpeg" alt="drawing" width="1000"/>  
 </p>
 
-# DOCUMENTATION IN PROGRESS
-
 Considering the big change that the world is facing, as well as our lives due to the COVID-19, we provide to people and companies a complete open-source tool to analyze the social distancing for streets, parks, offices, and even crowded places like malls, train stations, and others. 
 
 Here you have the code and everything that you'll need to perform your own intrinsic and extrinsic calibration, and run a YOLOv4 based object detection model to track the people in a warped space and analyze how far or close they are to each other (Social Distancing).
 
-The current pipeline only supports videos, but you can use the base classes, and methods to extend the application to video streamings, pictures and adapt it to your own project. Here, we will explain dependencies, code, and everything that you need to rock and roll!
+The current pipeline only supports videos, but you can use the base classes, and methods to extend the application to video streamings, pictures and adapt it to your own project or application. Here, we will explain the dependencies, the code, and everything that you need to rock and roll!
 
 **Status**: Archive (code is provided as-is, no updates expected)
 
@@ -18,12 +16,12 @@ The current pipeline only supports videos, but you can use the base classes, and
 <img src="./media/figures/social_distancing_demo.gif" alt="drawing" width="1000"/>
 </p>
 
-<sub>#computer-vision #Ai #object-detection #YOLO #covid19 #extrinsic #intrinsic #calibration #social-distancing #OpenCV #OpenSource </sub>
+<sub>#computer-vision #Ai #object-detection #yolo #yolo4 #python3 #Docker #covid19 #extrinsic #intrinsic #calibration #social-distancing #OpenCV #OpenSource #image-processing #deep-learning </sub>
 
 ---
 ### **Install Anaconda Environment**
 
-Anaconda is the preferred method of installing SafeDistanceDetector dependencies on Linux Systems (Only for Extrinsic and Intrinsic Calibration). Anaconda is a data science platform for scientific computing and makes managing machine learning libraries significantly easier. Native installation of these libraries is possible, but native un-installation of these libraries can be significantly painful and introduce significantly much more bloat. which is why We DO not will not be supporting that method of installation.
+Anaconda is the preferred method of installing SafeDistanceDetector dependencies on Linux Systems (Only for Extrinsic and Intrinsic calibration process). Anaconda is a data science platform for scientific computing and makes managing machine learning libraries significantly easier. Native installation of these libraries is possible, but native un-installation of these libraries can be significantly painful and introduce significantly much more bloat. which is why We DO not will not be supporting that method of installation.
 
 To download the installer, follow this link and download the Anaconda platform for Linux x64. https://www.anaconda.com/distribution/#linux.
 
@@ -36,7 +34,7 @@ After installing the platform, you might need to add conda command into your pat
 ---
 ### **Install SafeDistanceDetector Environment**
 
-You will now need to create the social distancing analyser environment with the required dependencies and libraries (provided in the ```requirements.txt```). 
+You will now need to create the social distancing analyser environment with the required dependencies and libraries (provided in ```requirements.txt```). 
 
 To create and to activate the environment, run:
 
@@ -44,19 +42,21 @@ To create and to activate the environment, run:
     conda activate distancing_analyser
     python -m pip install -r ./Safe-Distance-Detector/requirements.txt
 
-After this, fork this repo and make sure that your environment is activated and you are in the root path. Again, this environment is only for Intrinsic (If needed) and Extrinsic calibration scripts.
+After this, fork this repo and make sure that your environment is activated and you are in the root path. Again, this environment is only for Intrinsic (If needed) and Extrinsic calibration scripts, you can not run nothing related to object detection on this environment.
 
 ---
 ### **Build and Run Docker Image**
 
-The object detection model pipeline is based on [YOLOv4](https://github.com/AlexeyAB/darknet) and its dependencies, compilation, and configuration are packaged in a Docker Image. Before continuing, make sure you have [Docker](https://docs.docker.com/get-docker/), [Nvidia Docker](https://github.com/NVIDIA/nvidia-docker), and **440 Nvidia Drivers**.
+The object detection model pipeline is based on [YOLOv4](https://github.com/AlexeyAB/darknet) and its dependencies, compilation, and configuration are packaged in a Docker Image. Before continuing, make sure you have [Docker](https://docs.docker.com/get-docker/), [Nvidia Docker](https://github.com/NVIDIA/nvidia-docker), and **440 Nvidia Drivers** installed in your system.
 
-To run the Social Distancing Analyser Docker Script, just run the bash script ```start.sh```. If it's the first time probably is going to take a while, go for a soda and watch a series chapter or have a look at the meme zone.
+To run the Social Distancing Analyser Docker Image, just run the bash script ```start.sh```. If it's the first time probably is going to take a while, so, go for a soda and watch a series chapter or have a look at the meme zone for fun.
 
 you can also try by hand every command line, specially if the image is already built.
 
     xhost +
+    
     docker build -t working_mage .
+    
     docker run -it -v `pwd`/configs:/usr/src/app/configs -v `pwd`/media:/usr/src/app/media -v `pwd`/python_utils:/usr/src/app/python_utils --rm --gpus all -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1  -v /tmp/.X11-unix:/tmp/.X11-unix working_mage bash
 
 ---
@@ -92,7 +92,7 @@ If the calibrations succeed you get a [ **intrinsic.yaml**](https://github.com/J
 * **image_height**: images source height
 * **image_width**: images source width
 
-You can use the scripts of the next sections to validate how well your calibration result is. However, if you'll use camera surveillance streamings or security cameras is possible than these already give you an undistorted image, so the intrinsic calibration process is not needed, and you just lost your time reading this section. 
+You can use the scripts for the next sections to validate how well your calibration result is. However, if you'll use camera surveillance streamings or security cameras is possible than these already give you an undistorted image, so the intrinsic calibration process is not needed, and you just lost your time reading this section. 
 
 ---
 ### **Extrinsic Calibration**
