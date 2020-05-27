@@ -4,6 +4,8 @@
 <img src="./media/figures/banner.jpeg" alt="drawing" width="1000"/>  
 </p>
 
+# DOCUMENTATION IN PROGRESS
+
 Considering the big change that the world is facing, as well as our lives due to the COVID-19, we provide to people and companies a complete open-source tool to analyze the social distancing for streets, parks, offices, and even crowded places like malls, train stations, and others. 
 
 Here you have the code and everything that you'll need to perform your own intrinsic and extrinsic calibration, and run a YOLOv4 based object detection model to track the people in a warped space and analyze how far or close they are to each other (Social Distancing).
@@ -51,10 +53,16 @@ The object detection model pipeline is based on [YOLOv4](https://github.com/Alex
 
 To run the Social Distancing Analyser Docker Script, just run the bash script ```start.sh```. If it's the first time probably is going to take a while, go for a soda and watch a series chapter or have a look at the meme zone.
 
+you can also try by hand every command line, specially if the image is already built.
+
+    xhost +
+    docker build -t working_mage .
+    docker run -it -v `pwd`/configs:/usr/src/app/configs -v `pwd`/media:/usr/src/app/media -v `pwd`/python_utils:/usr/src/app/python_utils --rm --gpus all -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1  -v /tmp/.X11-unix:/tmp/.X11-unix working_mage bash
+
 ---
 ### **Intrinsic Calibration (Optional)**
 
-The process of geometric camera calibration is a fundamental step for any machine vision and vision robotics applications. The intrinsic parameters, also known as internal parameters, are the parameters intrinsic to the camera itself, such as the focal length and lens distortion. This distortion should be corrected to operate mathematically easier the image on a warped space or in a affine transformation. Unfortunately, the result of the calibration process can vary a lot depending on various factors.
+The process of geometric camera calibration is a fundamental step for any machine vision and robotics applications. The intrinsic parameters, also known as internal parameters, are the parameters intrinsic to the camera itself, such as the focal length and lens distortion. This distortion should be corrected to operate mathematically easier the image on a warped space or in a affine transformation. Unfortunately, the result of the calibration process can vary a lot depending on many factors.
 
 <p align="center">
 <img src ="./media/figures/cam_calibration.jpg" alt="drawing" width="1000"/>
@@ -89,9 +97,15 @@ You can use the scripts of the next sections to validate how well your calibrati
 ---
 ### **Extrinsic Calibration**
 
-The extrinsic parameters, also known as external parameters or camera pose, are the parameters used to describe the transformation between the camera and its external world. What you are gonna do here is use a dirty trick to transform the 3D image view space in a 2D space.
+The extrinsic parameters, also known as external parameters or camera pose, are the parameters used to describe the transformation between the camera and its external world. What you are gonna do here is use a dirty trick to transform the 3D image view space in a 2D warped space.
 
-run from the parent folder the script 'calibrate':
+run in the parent folder the script ```calibrate_extrinsic.py``` with the command:
+
+    python3 calibration/calibrate_extrinsic.py -v <<your video input located in Media folder>>
+
+If you don't pass the argument *-v, --video* a random video source will be taken from the Media folder. When you start the script you'll a menu, take a moment to read it and press the **TAB** key to continue.
+
+<!-- https://drive.google.com/drive/folders/1DpScASNQIRiim1_PMuS8Weywopt2exK8?usp=sharing -->
 
 Original image view with surface projection drawn           |  warped space from surface projection (Affine transformation)
 :-------------------------:|:-------------------------:
@@ -105,8 +119,30 @@ Original image view with surface projection drawn           |  warped space from
 ---
 ### **Object Detector**
 
+We are using [YOLOv4](https://github.com/AlexeyAB/darknet) object detector, here we are not going to explain what is it, or how does it work, there's tons of information to read about it. The only thing that you have to know is that everything is really simple with the docker image, you dont have to download, set and modify files to compile darknet to use Yolo in your aplications, just follow the previous instructions and the bash ```start.sh``` will do everything for you, and of course you can use it for other propouses and your own object detections based project.
+
 ---
 ### **Social Distancing Inspector**
+
+The social distancing for now is not real time, due to the object detection model that we are using, we get in an Helios Predator with a GTX1060 GPU almost 8FPS (quite slow), other models or aproches can be explored, but the propuse of this project is only test the computer vision process to aproximate the people location at the space where they are, and get the distances to others, the threshold of distance can vary, as well other parameters in the whole process. The information obtenied from the analyser is not used, depends on you what are you going to do with the data.
+
+    - file_name: Shopping-People-Commerce.mp4
+      extrinsic: extrinsic-Shopping.yaml
+      intrinsic: False
+
+<p align="center">
+<img src ="./media/figures/selection_warped_region.gif" alt="drawing" width="1000"/>
+</p>
+
+
+<p align="center">
+<img src ="./media/figures/rotating_changing_warped_space.gif" alt="drawing" width="1000"/>
+</p>
+
+
+<p align="center">
+<img src ="./media/figures/runing_analyzer.gif" alt="drawing" width="1000"/>
+</p>
 
 ---
 ### **Results**
@@ -124,8 +160,9 @@ Original image view with surface projection drawn           |  warped space from
 ---
 ### **Shortcomings and Improvements**
 
-* Customize, perform or improve object detection model to detect better the people under different scenarios. 
+* Customize, perform or improve object detection model to detect better the people under different and hard scenarios. 
 * Object detection pipelines or models could have better performance.
+* Object tracker when detector lost objects in frame.
 * General gui code optimizations and improvements
 
 ---
