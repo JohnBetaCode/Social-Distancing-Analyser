@@ -105,11 +105,32 @@ run in the parent folder the script ```calibrate_extrinsic.py``` with the comman
 
 If you don't pass the argument *-v, --video* a random video source will be taken from the Media folder. When you start the script you'll a menu, take a moment to read it and press the **TAB** key to continue.
 
-<!-- https://drive.google.com/drive/folders/1DpScASNQIRiim1_PMuS8Weywopt2exK8?usp=sharing -->
+When you run the script you get a window where you have to use the mouse to select four points, these points should correspond to the warped perspective, try to replicate from the camera view an imaginary perfect square as shown in the gif below. you can rotate your points, navigate them, remove them, or even modify them. A second window shows you a sky-view or bird-view of your selected warped space.
+
+<p align="center">
+<img src ="./media/figures/selection_warped_region.gif" alt="drawing" width="1000"/>
+</p>
+
+The social distancing analyzer has a radar window, so, to have the sense in the radar area with the orientation of your video, you should rotate the points until the point P1 is the point on the left superior corner, P2 on the right superior corner, P3 on the right bottom corner, and finally P4 on the left bottom corner. 
+
+<p align="center">
+<img src ="./media/figures/rotating_changing_warped_space.gif" alt="drawing" width="1000"/>
+</p>
+
+Other important issue is that some perspectives can be really difficult due to the camera perspective to the surface, because they are very inclined, so the warped space only will be shown in a small proportion in the radar, to avoid this you can use two extrinsic options, (1) full warped space, or (2) partial warped space. The difference between these, it's that in (1) you are using the whole original image/frame to get the spacial transformation (warped space) in the radar, and in (2) you're not. to switch between these mods, press I key.
+
+Full Warped Space...     | Partial Warped Space
+:-------------------------:|:-------------------------:
+<img src="./media/figures/full_warped_space.png" alt="drawing" height="400"/> | <img src="./media/figures/partial_warped_space.png" alt="drawing" height="400"/> 
+
+[Here](https://drive.google.com/drive/folders/1DpScASNQIRiim1_PMuS8Weywopt2exK8?usp=sharing) you can get some video streamings from surveillance cameras if you don't have nothing to play with. Just remember allocate all your videos in the Media folder.
 
 Original image view with surface projection drawn           |  warped space from surface projection (Affine transformation)
 :-------------------------:|:-------------------------:
 <img src="./media/figures/extrinsic_original_view.png" alt="drawing" height="400"/> | <img src="./media/figures/extrinsic_warped_view.png" alt="drawing" height="400"/> 
+
+
+
 
  Horizontal measure | Vertical measure   
 :-------------------------:|:-------------------------:
@@ -117,7 +138,7 @@ Original image view with surface projection drawn           |  warped space from
 
 
 ---
-### **Object Detector**
+### **Object Detector On Docker Image**
 
 We are using [YOLOv4](https://github.com/AlexeyAB/darknet) object detector, here we are not going to explain what is it, or how does it work, there's tons of information to read about it. The only thing that you have to know is that everything is really simple with the docker image, you dont have to download, set and modify files to compile darknet to use Yolo in your aplications, just follow the previous instructions and the bash ```start.sh``` will do everything for you, and of course you can use it for other propouses and your own object detections based project.
 
@@ -130,14 +151,7 @@ The social distancing for now is not real time, due to the object detection mode
       extrinsic: extrinsic-Shopping.yaml
       intrinsic: False
 
-<p align="center">
-<img src ="./media/figures/selection_warped_region.gif" alt="drawing" width="1000"/>
-</p>
 
-
-<p align="center">
-<img src ="./media/figures/rotating_changing_warped_space.gif" alt="drawing" width="1000"/>
-</p>
 
 
 <p align="center">
@@ -180,13 +194,13 @@ The social distancing for now is not real time, due to the object detection mode
 Do whatever you want!
 
 ---
-### **Show your support**
+### **Show Your Support**
 
 Give a ⭐️ if this project helped you!
 
 
 ---
-### **Contact and developers**
+### **Contact and Developers**
 
 💀 [John A Betancourt G](https://www.linkedin.com/in/john-betancourt-345557129/), [GitHub](https://github.com/JohnBetaCode), Email: john.betancourt93@gmail.com
 
